@@ -36,43 +36,44 @@ namespace AddressBook
 
         public void EditContact(string fName)
         {
-            foreach (var contact in contacts)
+            var contact = contacts.Find(c => c.GetFirstName().Equals(fName, StringComparison.OrdinalIgnoreCase));
+            if (contact != null)
             {
-                if (contact.GetFirstName().Equals(fName, StringComparison.OrdinalIgnoreCase))
-                {
-                    Console.WriteLine("Editing Contact...");
-                    Contact updatedContact = CreateNewContact();
-                    contacts[contacts.IndexOf(contact)] = updatedContact;//Update the contact of that person using index
-                    Console.WriteLine("Updated!!!");
-                    return;
-                }
+                Console.WriteLine("Editing Contact...");
+                Contact updatedContact = CreateNewContact();
+                contacts[contacts.IndexOf(contact)] = updatedContact; // Update the contact using index
+                Console.WriteLine("Updated!!!");
             }
-            Console.WriteLine("Contact not found.");
+            else
+            {
+                Console.WriteLine("Contact not found.");
+            }
         }
 
         public void DeleteContact(string fName)
         {
-            foreach (var contact in contacts)
+            // Using lambda expression to remove all contacts with the given first name
+            int removedCount = contacts.RemoveAll(c => c.GetFirstName().Equals(fName, StringComparison.OrdinalIgnoreCase));
+            if (removedCount > 0)
             {
-                if (contact.GetFirstName().Equals(fName, StringComparison.OrdinalIgnoreCase))
-                {
-                    contacts.Remove(contact);//Using list function to remove
-                    Console.WriteLine("Deleted success!!!");
-                    return;
-                }
+                Console.WriteLine("Deleted successfully!!!");
             }
-            Console.WriteLine("Contact not found.");
+            else
+            {
+                Console.WriteLine("Contact not found.");
+            }
         }
 
         public void DisplayAllContacts()
         {
-       
+
             Console.WriteLine("Contacts are: ");
-            foreach (var contact in contacts)
+            // Using lambda expression to display each contact
+            contacts.ForEach(contact =>
             {
                 contact.DisplayContact();
-                Console.WriteLine();//To print on next line
-            }
+                Console.WriteLine(); // To print on the next line
+            });
         }
         public Contact CreateNewContact()
         {
