@@ -17,7 +17,15 @@ namespace AddressBook
             do
             {
                 Console.WriteLine("Choose Option:\n1.Add\n2.Edit\n3.Delete\n4.Add Multiple\n5.Display All\n6.Exit");
-                int choice = Convert.ToInt32(Console.ReadLine());
+                int choice = 6;
+                try
+                {
+                    choice = Convert.ToInt32(Console.ReadLine());
+                }catch(FormatException e)
+                {
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine("Enter number between 1 to 6 only!");
+                }
 
                 switch (choice)
                 {
