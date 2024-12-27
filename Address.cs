@@ -66,33 +66,55 @@ namespace AddressBook
 
         public void DisplayAllContacts()
         {
-
-            Console.WriteLine("Contacts are: ");
-            // Using lambda expression to display each contact
-            contacts.ForEach(contact =>
+            try
             {
-                contact.DisplayContact();
-                Console.WriteLine(); // To print on the next line
-            });
+                if (contacts.Count == 0)
+                {
+                    throw new NoContactFoundException("Please add contacts first!");
+                }
+
+                Console.WriteLine("Contacts are: ");
+                // Using lambda expression to display each contact
+
+                contacts.ForEach(contact =>
+                {
+                    contact.DisplayContact();
+                    Console.WriteLine(); // To print on the next line
+                });
+            }
+            catch (NoContactFoundException e)
+            {
+                Console.WriteLine(e);//Calls the ToString method from custom exception
+            }
+            
         }
         public Contact CreateNewContact()
         {
-            Console.WriteLine("Enter First Name: ");
-            string fName = Console.ReadLine();
-            Console.WriteLine("Enter Last Name: ");
-            string lName = Console.ReadLine();
-            Console.WriteLine("Enter Address: ");
-            string address = Console.ReadLine();
-            Console.WriteLine("Enter City Name: ");
-            string city = Console.ReadLine();
-            Console.WriteLine("Enter State Name: ");
-            string state = Console.ReadLine();
-            Console.WriteLine("Enter Zip: ");
-            int zip = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine("Enter Phone No.: ");
-            long phone = Convert.ToInt64(Console.ReadLine());
+            try
+            {
+                Console.WriteLine("Enter First Name: ");
+                string fName = Console.ReadLine();
+                Console.WriteLine("Enter Last Name: ");
+                string lName = Console.ReadLine();
+                Console.WriteLine("Enter Address: ");
+                string address = Console.ReadLine();
+                Console.WriteLine("Enter City Name: ");
+                string city = Console.ReadLine();
+                Console.WriteLine("Enter State Name: ");
+                string state = Console.ReadLine();
+                Console.WriteLine("Enter Zip: ");
+                int zip = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("Enter Phone No.: ");
+                long phone = Convert.ToInt64(Console.ReadLine());
 
-            return new Contact(fName, lName, address, city, state, zip, phone);
+                return new Contact(fName, lName, address, city, state, zip, phone);
+            }
+            catch(FormatException e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+            
         }
     }
 }
