@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,8 +18,32 @@ namespace AddressBook
 
         public void AddContact(Contact contact)
         {
-            contacts.Add(contact);
-            Console.WriteLine("Contact Added!!!");
+            try
+            {
+                contacts.Add(contact);
+                var context = new ValidationContext(contact);
+                var results = new List<ValidationResult>();
+                bool isValid = Validator.TryValidateObject(contact, context, results, true);
+                if (isValid)
+                {
+                    Console.WriteLine("Data Validation Success");
+                    Console.WriteLine("Contact Added!!!");
+                }
+                else
+                {
+                    Console.WriteLine("Data Validation failed!");
+                }
+
+                foreach (var error in results)
+                {
+                    Console.WriteLine($"Error: {error}");
+                }
+            }catch(Exception ex)
+            {
+                Console.WriteLine("Value cannot be null");
+            }
+            
+            
         }
 
         public void AddMultipleContacts()
@@ -86,7 +111,11 @@ namespace AddressBook
             {
                 Console.WriteLine(e);//Calls the ToString method from custom exception
             }
-            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
         }
         public Contact CreateNewContact()
         {
@@ -108,6 +137,7 @@ namespace AddressBook
                 long phone = Convert.ToInt64(Console.ReadLine());
 
                 return new Contact(fName, lName, address, city, state, zip, phone);
+
             }
             catch(FormatException e)
             {

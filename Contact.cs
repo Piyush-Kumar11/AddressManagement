@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,14 +10,30 @@ namespace AddressBook
 {
     internal class Contact
     {
-        private string firstName { get; }
-        private string lastName { get; }
-        private string address { get;}
-        private string city { get; }
-        private string state { get; }
-        private int zip { get; }
-        private long phoneNum { get; }
-        private string email { get; }
+        [Required(ErrorMessage="First name required!")]
+        [StringLength(12,ErrorMessage ="String length should be in 2 to 12 Charcaters only!"),MinLength(2)]
+        public string firstName { get; set; }
+
+        [StringLength(12, ErrorMessage = "String length should be in 2 to 12 Charcaters only!"),MinLength(2)]
+        public string lastName { get; set; }
+
+        [StringLength(100, ErrorMessage = "String length should be in 2 to 100 Charcaters only!"),MinLength(2)]
+        public string address { get; set; }
+
+        [StringLength(12, ErrorMessage = "String length should be in 2 to 12 Charcaters only!"), MinLength(2)]
+        public string city { get; set; }
+
+        [StringLength(12, ErrorMessage = "String length should be in 2 to 12 Charcaters only!"), MinLength(2)]
+        public string state { get; set; }
+
+        [Range(100000,999999,ErrorMessage ="Not valid zip code")]
+        public int zip { get; set; }
+
+        [Range(1000000000, 9999999999, ErrorMessage = "Not valid zip code")]
+        public long phoneNum { get; set; }
+
+        [EmailAddress(ErrorMessage ="Not a valid email")]
+        public string email { get; set; }
 
         public Contact(string fName,string lName,string add, string city, string state, int zip, long phoneNum)
         {
