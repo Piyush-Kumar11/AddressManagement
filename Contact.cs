@@ -12,49 +12,67 @@ namespace AddressBook
     {
         [Required(ErrorMessage="First name required!")]
         [StringLength(12,ErrorMessage ="String length should be in 2 to 12 Charcaters only!"),MinLength(2)]
-        public string firstName { get; set; }
+        public string FirstName { get; set; }
 
         [StringLength(12, ErrorMessage = "String length should be in 2 to 12 Charcaters only!"),MinLength(2)]
-        public string lastName { get; set; }
+        public string LastName { get; set; }
 
         [StringLength(100, ErrorMessage = "String length should be in 2 to 100 Charcaters only!"),MinLength(2)]
-        public string address { get; set; }
+        public string Address { get; set; }
 
         [StringLength(12, ErrorMessage = "String length should be in 2 to 12 Charcaters only!"), MinLength(2)]
-        public string city { get; set; }
+        public string City { get; set; }
 
         [StringLength(12, ErrorMessage = "String length should be in 2 to 12 Charcaters only!"), MinLength(2)]
-        public string state { get; set; }
+        public string State { get; set; }
 
         [Range(100000,999999,ErrorMessage ="Not valid zip code")]
-        public int zip { get; set; }
+        public int Zip { get; set; }
 
         [Range(1000000000, 9999999999, ErrorMessage = "Not valid zip code")]
-        public long phoneNum { get; set; }
+        public long PhoneNum { get; set; }
 
         [EmailAddress(ErrorMessage ="Not a valid email")]
-        public string email { get; set; }
+        public string Email { get; set; }
 
         public Contact(string fName,string lName,string add, string city, string state, int zip, long phoneNum)
         {
-            this.firstName = fName;
-            this.lastName = lName;
-            this.address = lName;
-            this.city = city;
-            this.state = state;
-            this.zip = zip;
-            this.phoneNum = phoneNum;
+            FirstName = fName;
+            LastName = lName;
+            Address = lName;
+            City = city;
+            State = state;
+            Zip = zip;
+            PhoneNum = phoneNum;
         }
 
-        public void DisplayContact()
+        public override string ToString()
         {
-            Console.WriteLine("First Name: " + firstName + "\nLast Name: " + lastName + "\nAddress: " + address + "\ncity: " + city + "\nState: " + state + "\nZip: " + zip + "\nPhoneNumber: " + phoneNum);
+            return $"First Name: {FirstName} \nLast Name: {LastName} \nAddress: {Address} \ncity: {City} \nState: {State} \nZip: {Zip} \nPhoneNumber: {PhoneNum}";
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Contact otherContact)
+            {
+                return string.Equals(FirstName, otherContact.FirstName, StringComparison.OrdinalIgnoreCase) &&
+                       string.Equals(LastName, otherContact.LastName, StringComparison.OrdinalIgnoreCase);
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            string fName = FirstName != null ? FirstName.ToLower() : string.Empty;
+            string lName = LastName != null ? LastName.ToLower() : string.Empty;
+            return (fName + lName).GetHashCode();
+        }
+
 
         public string GetFirstName()
         {
-            return firstName;
+            return FirstName;
         }
-
+        public string GetLastName() => LastName;
     }
 }
