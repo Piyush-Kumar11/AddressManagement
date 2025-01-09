@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace AddressBook
 {
@@ -42,6 +43,8 @@ namespace AddressBook
                         break;
 
                     case 2:
+                        Console.WriteLine("Available Address Book:");
+                        
                         Console.WriteLine("Enter the name of the Address Book to select:");
                         string bookName = Console.ReadLine();
 
@@ -56,10 +59,23 @@ namespace AddressBook
                         break;
 
                     case 3:
-                        Console.WriteLine("Existing Address Books:");
-                        foreach (var book in addressBooks.Keys)
+                        if (addressBooks.Count != 0)
                         {
-                            Console.WriteLine(book);
+                            foreach (var entry in addressBooks)
+                            {
+                                string key = entry.Key;
+                                Address addressBook = entry.Value; // Value (the Address object containing contacts)
+
+                                Console.WriteLine($"Address Book for: {key}");
+
+                                addressBook.DisplayAllContacts();
+
+                                Console.WriteLine();
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("No Address Found!");
                         }
                         break;
 
@@ -84,8 +100,8 @@ namespace AddressBook
             char choice;
             do
             {
-                Console.WriteLine("Choose Option:\n1. Add Contact\n2. Edit Contact\n3. Delete Contact\n4. Add Multiple Contacts\n5. Display All Contacts\n6. Search Contacts by City or State\n7. View Contact Count by City or State\n8. Display Persons by City\n9. Display Persons by State\n10. Sort contacts by Name\n11. Sort Contacts by State, City or Zip\n12. Return to Main Menu");
-                int action = 12;
+                Console.WriteLine("Choose Option:\n1. Add Contact\n2. Edit Contact\n3. Delete Contact\n4. Add Multiple Contacts\n5. Display All Contacts\n6. Search Contacts by City or State\n7. View Contact Count by City or State\n8. Display Persons by City\n9. Display Persons by State\n10. Sort contacts by Name\n11. Sort Contacts by State, City or Zip\n12. For File Operations\n13. Return to Main Menu");
+                int action = 13;
 
                 try
                 {
@@ -176,13 +192,50 @@ namespace AddressBook
                         break;
 
                     case 12:
+                        Console.WriteLine("Choose Option:\n1. Add into File\n2. Read from File\n3. Add to CSV file\n4. Read from CSV file\n5. Add to JSON file\n6. Read from JSON file\n7. Exit");
+                        int fileChoice = Convert.ToInt32(Console.ReadLine());
+                        switch (fileChoice)
+                        {
+                            case 1:
+                                addressBook.SaveToFile();
+                                break;
+
+                            case 2:
+                                addressBook.LoadFromFile();
+                                break;
+
+                            case 3:
+                                addressBook.SaveToCSV();
+                                break;
+
+                            case 4:
+                                addressBook.ReadFromCSV();
+                                break;
+
+                            case 5:
+                                addressBook.SaveToJson();
+                                break;
+
+                            case 6:
+                                addressBook.ReadFromJson();
+                                break;
+
+                            case 7:
+                                Console.WriteLine("Exited Successfully!");
+                                return;
+
+                            default:
+                                Console.WriteLine("Choose a valid option...");
+                                break;
+                        }
+                        break;
+                    case 13:
                         return;
 
                     default:
                         Console.WriteLine("Choose a valid option...");
                         break;
                 }
-
                 Console.WriteLine("Enter 'Y/y' to continue in this Address Book or any other key to return to Main Menu.");
                 choice = Convert.ToChar(Console.ReadLine());
             } while (choice == 'Y' || choice == 'y');

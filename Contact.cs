@@ -29,26 +29,28 @@ namespace AddressBook
         [Range(100000,999999,ErrorMessage ="Not valid zip code")]
         public int Zip { get; set; }
 
-        [Range(1000000000, 9999999999, ErrorMessage = "Not valid zip code")]
+        [Range(1000000000, 9999999999, ErrorMessage = "Not valid Phone Number")]
         public long PhoneNum { get; set; }
 
         [EmailAddress(ErrorMessage ="Not a valid email")]
         public string Email { get; set; }
 
-        public Contact(string fName,string lName,string add, string city, string state, int zip, long phoneNum)
+        public Contact() { } // Parameterless constructor for CsvHelper
+        public Contact(string fName,string lName,string add, string city, string state, int zip, long phoneNum, string email)
         {
             FirstName = fName;
             LastName = lName;
-            Address = lName;
+            Address = add;
             City = city;
             State = state;
             Zip = zip;
             PhoneNum = phoneNum;
+            Email = email;
         }
 
         public override string ToString()
         {
-            return $"First Name: {FirstName} \nLast Name: {LastName} \nAddress: {Address} \ncity: {City} \nState: {State} \nZip: {Zip} \nPhoneNumber: {PhoneNum}";
+            return $"First Name: {FirstName} \nLast Name: {LastName} \nAddress: {Address} \ncity: {City} \nState: {State} \nZip: {Zip} \nPhoneNumber: {PhoneNum} \nEmail: {Email}";
         }
 
         public override bool Equals(object obj)
@@ -69,10 +71,7 @@ namespace AddressBook
         }
 
 
-        public string GetFirstName()
-        {
-            return FirstName;
-        }
+        public string GetFirstName() => FirstName;
         public string GetLastName() => LastName;
     }
 }

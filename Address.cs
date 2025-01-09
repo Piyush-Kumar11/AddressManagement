@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
 
 namespace AddressBook
 {
@@ -9,6 +13,10 @@ namespace AddressBook
         List<Contact> contacts;
         Dictionary<string, List<Contact>> cityDictionary;
         Dictionary<string, List<Contact>> stateDictionary;
+
+        static string filePath = @"C:\Users\Piyush\Desktop\C# Programs\AddressBook\Address.txt";
+        static string csvFilePath = @"C:\Users\Piyush\Desktop\C# Programs\AddressBook\AddressCsv.csv";
+        static string jsonFilePath = @"C:\Users\Piyush\Desktop\C# Programs\AddressBook\AddressJson.json";
 
         public Address()
         {
@@ -21,13 +29,14 @@ namespace AddressBook
         {
             try
             {
-                contacts.Add(contact);
                 var context = new ValidationContext(contact);
                 var results = new List<ValidationResult>();
                 bool isValid = Validator.TryValidateObject(contact, context, results, true);
+
                 if (isValid)
                 {
                     Console.WriteLine("Data Validation Success");
+                    contacts.Add(contact);
                     Console.WriteLine("Contact Added!!!");
 
                     // Update city and state dictionaries
@@ -46,16 +55,15 @@ namespace AddressBook
                 else
                 {
                     Console.WriteLine("Data Validation failed!");
-                }
-
-                foreach (var error in results)
-                {
-                    Console.WriteLine($"Error: {error}");
+                    foreach (var error in results)
+                    {
+                        Console.WriteLine($"Error: {error}");
+                    }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Value cannot be null");
+                Console.WriteLine("Value cannot be null: "+ex.Message);
             }
         }
 
@@ -251,13 +259,166 @@ namespace AddressBook
                 int zip = Convert.ToInt32(Console.ReadLine());
                 Console.WriteLine("Enter Phone No.: ");
                 long phone = Convert.ToInt64(Console.ReadLine());
+                Console.WriteLine("Enter Email Id.: ");
+                string email = Console.ReadLine();
 
-                return new Contact(fName, lName, address, city, state, zip, phone);
+                return new Contact(fName, lName, address, city, state, zip, phone,email);
             }
             catch (FormatException e)
             {
                 Console.WriteLine(e.Message);
                 return null;
+            }
+        }
+
+        public void SaveToFile()
+        {
+            if (File.Exists(filePath))
+            {
+                Console.WriteLine("File already exist!");
+            }
+            else
+            {
+                File.Create(filePath).Close();
+                Console.WriteLine("File Created!");
+            }
+
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(filePath))
+                {
+                    foreach (var contact in contacts)
+                    {
+                        writer.WriteLine($"{contact.FirstName},{contact.LastName},{contact.Address},{contact.City},{contact.State},{contact.Zip},{contact.PhoneNum},{contact.Email}");
+                    }
+                }
+
+                Console.WriteLine("Contacts saved to file successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving to file: {ex.Message}");
+            }
+        }
+
+        public void LoadFromFile()
+        {
+            try
+            {
+                if (File.Exists(filePath))
+                {
+                    Console.WriteLine("Contacts loaded from file successfully. Here are the details:");
+
+                    string[] lines = File.ReadAllLines(filePath);
+
+                    foreach (var line in lines)
+                    {
+                        Console.WriteLine(line);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No saved file found.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading from file: {ex.Message}");
+            }
+        }
+
+        public void SaveToCSV()
+        {
+            try
+            {
+                using (var writer = new StreamWriter(csvFilePath))
+                using (var csv = new CsvHelper.CsvWriter(writer, CultureInfo.InvariantCulture))
+                {
+                    csv.WriteRecords(contacts); // Writes all contacts as records
+                }
+
+                Console.WriteLine("Contacts saved to CSV successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving to CSV: {ex.Message}");
+            }
+        }
+
+        public void ReadFromCSV()
+        {
+            try
+            {
+                if (File.Exists(csvFilePath))
+                {
+                    using (var reader = new StreamReader(csvFilePath))
+                    using (var csv = new CsvHelper.CsvReader(reader, CultureInfo.InvariantCulture))
+                    {
+                        var loadedContacts = csv.GetRecords<Contact>().ToList();
+                        Console.WriteLine("Contacts loaded from CSV successfully. Here are the details:");
+
+                        foreach (var contact in loadedContacts)
+                        {
+                            Console.WriteLine($"{contact.FirstName}, {contact.LastName}, {contact.Address}, {contact.City}, {contact.State}, {contact.Zip}, {contact.PhoneNum},{contact.Email}");
+                        }
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No CSV file found.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error reading from CSV: {ex.Message}");
+            }
+        }
+
+        public void SaveToJson()
+        {
+            try
+            {
+                string jsonData = JsonSerializer.Serialize(contacts, new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                });
+
+                File.WriteAllText(jsonFilePath, jsonData);
+
+                Console.WriteLine("Contacts saved to JSON successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving to JSON: {ex.Message}");
+            }
+        }
+
+
+        public void ReadFromJson()
+        {
+            try
+            {
+                if (File.Exists(jsonFilePath))
+                {
+                    string jsonData = File.ReadAllText(jsonFilePath);
+
+                    var loadedContacts = JsonSerializer.Deserialize<List<Contact>>(jsonData);
+
+                    Console.WriteLine("Contacts loaded from JSON successfully. Here are the details:");
+
+                    foreach (var contact in loadedContacts)
+                    {
+                        Console.WriteLine($"{contact.FirstName}, {contact.LastName}, {contact.Address}, {contact.City}, {contact.State}, {contact.Zip}, {contact.PhoneNum},{contact.Email}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No JSON file found.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error reading from JSON: {ex.Message}");
             }
         }
     }
